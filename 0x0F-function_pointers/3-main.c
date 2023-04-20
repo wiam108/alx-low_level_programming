@@ -1,39 +1,41 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "3-calc.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "function_pointers.h"
 
 /**
-* main - Entry point
-* @argc: Number of command-line arguments
-* @argv: Array of command-line arguments
-*
-* Return: 0 on success, 98 on incorrect usage, 99 on invalid operator,
-*         100 on division/modulo by zero
-*/
-int main(int argc, char *argv[])
+ * main - print results of the operation
+ * @argc: the number of arguments
+ * @argv: array of pointers to args
+ *
+ * Return: ALways 0
+ */
+int main(int __attribute__((__unused__)) argc, char *argv[])
 {
-	int num1, num2, result;
-	int (*op_func)(int, int);
+	int num1;
+	int num2;
+	char *op;
 
 	if (argc != 4)
 	{
-		printf("Usage: %s <num1> <operator> <num2 > \n", argv[0]);
-		return (98);
+		printf("Error\n");
+		exit(98);
 	}
 	num1 = atoi(argv[1]);
+	op = argv[2];
 	num2 = atoi(argv[3]);
-	op_func = get_op_func(argv[2]);
-	if (!op_func)
+
+	if (get_op_func(op) == NULL || op[1] != '\0')
 	{
-		printf("Error: Unknown operator '%s'\n", argv[2]);
-		return (99);
+		printf("Error\n");
+		exit(99);
+
 	}
-	if ((op_func == op_div || op_func == op_mod) && num2 == 0)
+	if ((*op == '/' && num2 == 0) || (*op == '%' && num2 == 0))
 	{
-		printf("Error: Division by zero\n");
-		return (100);
+		printf("Error\n");
+		exit(100);
 	}
-	result = op_func(num1, num2);
-	printf("%d\n", result);
+	printf("%d\n", get_op_func(op)(num1, num2));
 	return (0);
 }
